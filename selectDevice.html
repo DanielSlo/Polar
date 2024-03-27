@@ -1,0 +1,32 @@
+<!-- selectDevice.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Device</title>
+</head>
+<body>
+    <h1>Select Playback Device</h1>
+    <form action="/play" method="GET">
+        <label for="devices">Select a device:</label>
+        <select id="devices" name="deviceNumber">
+            <!-- JavaScript will populate options here -->
+        </select>
+        <input type="hidden" name="uri" value="YOUR_TRACK_URI_HERE">
+        <button type="submit">Play</button>
+    </form>
+
+    <script>
+        // JavaScript to populate options dynamically
+        const devices = JSON.parse(`DEVICE_LIST_JSON_HERE`);
+        const select = document.getElementById('devices');
+        devices.forEach(device => {
+            const option = document.createElement('option');
+            option.value = device.id;
+            option.textContent = `${device.name} (${device.type})`;
+            select.appendChild(option);
+        });
+    </script>
+</body>
+</html>

@@ -213,6 +213,8 @@ function getRecommendationsAndRespond(res) {
             const recommendations = data.body.tracks.map(track => track.name); // Get the names of the recommended tracks
             console.log('Recommendations:', recommendations);
 
+
+            spotifyApi.getRecommendations.
             // Send the response with the recommendations
             res.send({ recommendations }); // Send recommendations as JSON object
         }).catch(error => {

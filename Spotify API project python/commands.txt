@@ -1,0 +1,13 @@
+python3 -m venv spotifyApi-env
+source spotifyApi-env/bin/activate
+pip install spotipy --upgrade
+pip install streamlit
+pip install "altair<5"             (streamlit runs into issues with altair5, in future will be updated)
+
+export SPOTIPY_CLIENT_ID=23a9fab99eee4d3a81a64dcbbe35b546
+export SPOTIPY_CLIENT_SECRET=b2eb7cde914b4aaaaec6f4b542378dfa
+export SPOTIPY_REDIRECT_URI=http://localhost:3000
+
+
+
+to run app: streamlit run <app name>.py

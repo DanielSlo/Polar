@@ -1,5 +1,5 @@
 import streamlit as st
-
+import spotipy
 # Title
 st.title('My First Streamlit App')
 

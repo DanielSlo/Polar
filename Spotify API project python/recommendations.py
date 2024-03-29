@@ -1,14 +1,34 @@
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+import spotipy.util as util
+from spotipy.oauth2 import SpotifyClientCredentials
+
+
 import streamlit as st
 from datetime import datetime
 import time
 
+
+SPOTIPY_CLIENT_ID='23a9fab99eee4d3a81a64dcbbe35b546'
+SPOTIPY_CLIENT_SECRET='b2eb7cde914b4aaaaec6f4b542378dfa'
+SPOTIPY_REDIRECT_URI='http://localhost:3000'
+
 scope = ["user-library-read", "user-modify-playback-state", 
          "user-top-read", "user-read-recently-played", "user-read-playback-state"]
 
-sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
+# sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
+
+cid = SPOTIPY_CLIENT_ID
+secret = SPOTIPY_CLIENT_SECRET
+scope = "playlist-modify-public"
+token = util.prompt_for_user_token('USERNAME_TO_AUTHORIZE',scope,client_id=cid,
+                                   client_secret=secret,redirect_uri='http://localhost:3000')
+sp = spotipy.Spotify(auth=token)
+
+
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=SPOTIPY_CLIENT_ID, 
+                                               client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI))
 
 def get_recommendations(track_name):
     # Get track URI
@@ -19,12 +39,6 @@ def get_recommendations(track_name):
     num_recommendations = 5
     recommendations = sp.recommendations(seed_tracks=[track_uri], limit=num_recommendations)['tracks']
     return recommendations
-
-# Define a function to display the digital clock
-def digital_clock():
-    current_time = datetime.now().strftime("%H:%M:%S")
-    st.write(f"The current time is: {current_time}")
-
 
 
 #generate web app

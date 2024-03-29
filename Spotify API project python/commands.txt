@@ -4,10 +4,13 @@ pip install spotipy --upgrade
 pip install streamlit
 pip install "altair<5"             (streamlit runs into issues with altair5, in future will be updated)
 
+Note: the virtual environment is created in the directory in which you run the command 
+
 export SPOTIPY_CLIENT_ID=23a9fab99eee4d3a81a64dcbbe35b546
 export SPOTIPY_CLIENT_SECRET=b2eb7cde914b4aaaaec6f4b542378dfa
 export SPOTIPY_REDIRECT_URI=http://localhost:3000
 
-
+Note: the export commands set environment variables local to the shell in which you run them.
+If this shell is closed or restarted, the export commands need to be used again to once again set the environment variables.
 
 to run app: streamlit run <app name>.py

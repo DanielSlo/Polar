@@ -12,15 +12,15 @@ from datetime import datetime
 import time
 
 
-# Generate a unique identifier for the current user session
-user_session_id = str(uuid.uuid4())
+# # Generate a unique identifier for the current user session
+# user_session_id = str(uuid.uuid4())
 
-SPOTIPY_CLIENT_ID='23a9fab99eee4d3a81a64dcbbe35b546'
-SPOTIPY_CLIENT_SECRET='b2eb7cde914b4aaaaec6f4b542378dfa'
-SPOTIPY_REDIRECT_URI='http://localhost:3000'
+# SPOTIPY_CLIENT_ID='23a9fab99eee4d3a81a64dcbbe35b546'
+# SPOTIPY_CLIENT_SECRET='b2eb7cde914b4aaaaec6f4b542378dfa'
+# SPOTIPY_REDIRECT_URI='http://localhost:3000'
 
-scope = ["user-library-read", "user-modify-playback-state", 
-         "user-top-read", "user-read-recently-played", "user-read-playback-state", "user-read-private"]
+# scope = ["user-library-read", "user-modify-playback-state", 
+#          "user-top-read", "user-read-recently-played", "user-read-playback-state", "user-read-private"]
 
 # sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 

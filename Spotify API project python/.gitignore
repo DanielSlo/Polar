@@ -1,3 +1,4 @@
 spotifyApi-env/*
 .cache
 .cache-USERNAME-TO-AUTHORIZE
+caches/*

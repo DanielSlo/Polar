@@ -20,7 +20,7 @@ SPOTIPY_CLIENT_SECRET='b2eb7cde914b4aaaaec6f4b542378dfa'
 SPOTIPY_REDIRECT_URI='http://localhost:3000'
 
 scope = ["user-library-read", "user-modify-playback-state", 
-         "user-top-read", "user-read-recently-played", "user-read-playback-state"]
+         "user-top-read", "user-read-recently-played", "user-read-playback-state", "user-read-private"]
 
 # sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 
@@ -41,14 +41,18 @@ scope = ["user-library-read", "user-modify-playback-state",
 
 
 
-#works to require login every time it is a new user
-sp = spotipy.Spotify(auth_manager=SpotifyPKCE(scope=scope, 
-                                               client_id=SPOTIPY_CLIENT_ID,  
-                                               redirect_uri=SPOTIPY_REDIRECT_URI,
-                                               cache_path=f'.spotifycache_{user_session_id}'))
+# #works to require login every time it is a new user
+# sp = spotipy.Spotify(auth_manager=SpotifyPKCE(scope=scope, 
+#                                                client_id=SPOTIPY_CLIENT_ID,  
+#                                                redirect_uri=SPOTIPY_REDIRECT_URI,
+#                                                cache_path=f'.spotifycache_{user_session_id}'))
 
-#testing newmethod
+# #testing newmethod
         
+if 'sp' in st.session_state:
+    sp = st.session_state['sp']
+else:
+    sp = None
 
 
 # sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=SPOTIPY_CLIENT_ID, 
@@ -74,14 +78,88 @@ def get_recommendations(track_name):
 
     
 
+st.set_page_config(menu_items=None)
+
+
+#no play left and right, scroll only, disable horizontal scrolling
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+local_css("pages/style.css")
+
+
+#hide side bar
+st.markdown("""
+    <style>
+        section[data-testid="stSidebar"][aria-expanded="true"]{
+            display: none;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+#push text down to fit with "logged in as"
+st.markdown("<div style='margin-top: 75px;'></div>", unsafe_allow_html=True)
+
+# Define the CSS style for displaying "logged in as"
+style = """
+<style>
+.user-info {
+    position: sticky;
+    top: 10px;
+    right: 0px;
+    padding: 10px;
+    text-align: center; /* Center align the text */
+}
+.user-info img {
+    display: block;
+    margin: 0 auto; /* Center the image horizontally */
+    border-radius: 50%;
+    margin-bottom: 30px; /* Reduce the bottom margin */
+    width: 75px;
+    height: 75px;
+}
+.user-info b {
+    display: block;
+    margin-top: -25px; /* Adjust the top margin */
+}
+</style>
+"""
+user_info = sp.current_user()
+# Display user information and image
+st.write(style, unsafe_allow_html=True)
+st.write(f'<div class="user-info"><img src="{user_info["images"][0]["url"]}" width="200" height="200"><b>Logged in as:</b><br><b>{user_info["display_name"]}</b></div>', unsafe_allow_html=True)
+
+
 
 st.title("Music Recommendation System")
 track_name = st.text_input("Enter a song name:")
 
 
+
+
+# st.image(user_info['images'][0]['url'], width=250)
+# st.write(f"Currently logged in as: {user_info['display_name']}")
+# Define the CSS style
+
+
 #if user inputs a track name display 5 recommendations based on that song and 
 #play top recommendation on availble device
 if track_name:
+    st.markdown(
+    """
+    <style>
+    body {
+        overflow-x: hidden;
+    }
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
     recommendations = get_recommendations(track_name)
     st.write("Recommended songs:")
     for track in recommendations:

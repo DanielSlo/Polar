@@ -5,7 +5,7 @@ from spotipy.oauth2 import SpotifyPKCE
 import spotipy.util as util
 from spotipy.oauth2 import SpotifyClientCredentials
 import uuid  # Import the UUID module to generate unique IDs for each user
-
+import os
 
 import streamlit as st
 from datetime import datetime
@@ -49,10 +49,8 @@ scope = ["user-library-read", "user-modify-playback-state",
 
 # #testing newmethod
         
-if 'sp' in st.session_state:
-    sp = st.session_state['sp']
-else:
-    sp = None
+
+
 
 
 # sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=SPOTIPY_CLIENT_ID, 
@@ -125,69 +123,104 @@ style = """
 }
 </style>
 """
-user_info = sp.current_user()
-# Display user information and image
-st.write(style, unsafe_allow_html=True)
-st.write(f'<div class="user-info"><img src="{user_info["images"][0]["url"]}" width="200" height="200"><b>Logged in as:</b><br><b>{user_info["display_name"]}</b></div>', unsafe_allow_html=True)
 
 
 
-st.title("Music Recommendation System")
-track_name = st.text_input("Enter a song name:")
+#initialize logged_in flag session state variable, will update to True after login
+# st.session_state.logged_in
 
 
-
-
-# st.image(user_info['images'][0]['url'], width=250)
-# st.write(f"Currently logged in as: {user_info['display_name']}")
-# Define the CSS style
-
-
-#if user inputs a track name display 5 recommendations based on that song and 
-#play top recommendation on availble device
-if track_name:
-    st.markdown(
-    """
-    <style>
-    body {
-        overflow-x: hidden;
-    }
-    img {
-        max-width: 100%;
-        height: auto;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-    recommendations = get_recommendations(track_name)
-    st.write("Recommended songs:")
-    for track in recommendations:
-        st.header(track['name'])
-        st.image(track['album']['images'][0]['url'])
-
+# Function to read session state variable, to see if user is logged in or not
+def read_session_state():
+    session_state = None
+    filename = 'login_flag.txt'
+    if os.path.exists(filename):
+        with open(filename, 'r') as f:
+            login_flag = f.read().strip()
+        # Overwrite the file with an empty string
+        # with open(filename, 'w') as f:
+        #     f.write('')
+    return login_flag
     
 
+# Check if the user is logged in
+logged_in = read_session_state()
 
-    #begin playback of top song
-    uri = recommendations[0]['uri']
-    devices = sp.devices()
-    #print available devices and their status
-    print(f"\n\nnum devices: {len(devices)}")
-    for device in devices['devices']:
-        print(f"device: {device['name']}, active: {device['is_active']}") 
 
-    #start playback of top recommendation song if device is available
-    if len(devices) >= 1 and devices['devices'][0]['is_active']:
-        sp.start_playback(uris=[uri])
-        sp.repeat(state="off")
-        sp.shuffle(state=True)
-        for track in recommendations[1:]:
-            sp.add_to_queue(track['uri'])
+#log in was successful now run recommendations.py
+if logged_in:
+    # print("logged in is TRUE")
+    #retrieve initialized spotifyApi object from login.py
+    sp = st.session_state['sp']
+    user_info = sp.current_user()
+
+
+    # Display user information and image
+    st.write(style, unsafe_allow_html=True)
+    st.write(f'<div class="user-info"><img src="{user_info["images"][0]["url"]}" width="200" height="200"><b>Logged in as:</b><br><b>{user_info["display_name"]}</b></div>', unsafe_allow_html=True)
+
+
+
+    st.title("Music Recommendation System")
+    track_name = st.text_input("Enter a song name:")
+
+
+
+
+    # st.image(user_info['images'][0]['url'], width=250)
+    # st.write(f"Currently logged in as: {user_info['display_name']}")
+    # Define the CSS style
+
+
+    #if user inputs a track name display 5 recommendations based on that song and 
+    #play top recommendation on availble device
+    if track_name:
+        st.markdown(
+        """
+        <style>
+        body {
+            overflow-x: hidden;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+        )
+        
+        
+
+
+        recommendations = get_recommendations(track_name)
+        st.write("Recommended songs:")
+        for track in recommendations:
+            st.header(track['name'])
+            st.image(track['album']['images'][0]['url'])
 
         
-    else:
-        print("No available devices to start playback")
+
+
+        #begin playback of top song
+        uri = recommendations[0]['uri']
+        devices = sp.devices()
+        #print available devices and their status
+        print(f"\n\nnum devices: {len(devices)}")
+        for device in devices['devices']:
+            print(f"device: {device['name']}, active: {device['is_active']}") 
+
+        #start playback of top recommendation song if device is available
+        if len(devices) >= 1 and devices['devices'][0]['is_active']:
+            sp.start_playback(uris=[uri])
+            sp.repeat(state="off")
+            sp.shuffle(state=True)
+            for track in recommendations[1:]:
+                sp.add_to_queue(track['uri'])
+
+            
+        else:
+            print("No available devices to start playback")
 
 
 

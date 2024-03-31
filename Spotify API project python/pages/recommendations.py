@@ -62,7 +62,6 @@ import time
 
 def get_recommendations(track_name):
     # Get track URI
-    print("flag")
     results = sp.search(q=track_name, type='track')
     track_uri = results['tracks']['items'][0]['uri']
 
@@ -163,6 +162,8 @@ if logged_in:
 
     st.title("Music Recommendation System")
     track_name = st.text_input("Enter a song name:")
+    start_playback_toggle = st.toggle('Start playback of recommended songs', value=True)
+
 
 
 
@@ -211,16 +212,20 @@ if logged_in:
             print(f"device: {device['name']}, active: {device['is_active']}") 
 
         #start playback of top recommendation song if device is available
-        if len(devices) >= 1 and devices['devices'][0]['is_active']:
-            sp.start_playback(uris=[uri])
-            sp.repeat(state="off")
-            sp.shuffle(state=True)
-            for track in recommendations[1:]:
-                sp.add_to_queue(track['uri'])
+        if start_playback_toggle:
+            if len(devices) >= 1 and devices['devices'][0]['is_active']:
+                sp.start_playback(uris=[uri])
+                sp.repeat(state="off")
+                sp.shuffle(state=True)
+                for track in recommendations[1:]:
+                    sp.add_to_queue(track['uri'])
 
-            
-        else:
-            print("No available devices to start playback")
+                st.toast(f"Playback started on {devices['devices'][0]['name']}, recommendations added to queue")
+
+                
+            else:
+                st.toast("No available devices to start playback")
+                
 
 
 

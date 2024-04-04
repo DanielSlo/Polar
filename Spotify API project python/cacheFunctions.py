@@ -6,6 +6,9 @@ import time
 CACHE_DIR = "caches"
 def remove_duplicates():
     # Get all cache files
+    if not os.path.exists(CACHE_DIR):
+        os.makedirs(CACHE_DIR)
+    
     cache_files = os.listdir(CACHE_DIR)
 
     # Create a set to store unique user IDs
@@ -25,9 +28,6 @@ def remove_duplicates():
             else:
                 # Add the user ID to the set
                 unique_users.add(user_id)
-
-
-
             
 CACHE_LIFETIME_SECONDS = 43200  # 12 hours
 MAX_CACHE_SIZE_BYTES = 1073741824  # 1 GB
